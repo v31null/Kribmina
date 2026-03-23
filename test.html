@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="/css/css.css" />
+		<link rel="stylesheet" href="/css/katex.css" />
+		<script defer src="/js/katex.js"></script>
+		<script defer src="/js/auto-render.js"></script>
+		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/copy-tex.mjs" type="module"></script>
+
+		<script>
+			window.onload = function () {
+				renderMathInElement(document.body, {
+					delimiters: [
+						{ left: "$$", right: "$$", display: true },
+						{ left: "$", right: "$", display: false },
+					],
+					throwOnError: false,
+					trust: true,
+					preProcess: function (math) {
+						return math.replace(/Ș̈/g, "\\ddot{S}\\rlap{\\hspace{-1em}\\raisebox{-0.4ex}{\\textit{,}}}").replace(/Ț̈/g, "\\ddot{T}\\rlap{\\hspace{-1em}\\raisebox{-0.4ex}{\\textit{,}}}").replace(/ș̈/g, "\\ddot{s}\\rlap{\\hspace{-0.5em}\\raisebox{-0.4ex}{\\textit{,}}}").replace(/ț̈/g, "\\ddot{t}\\rlap{\\hspace{-0.5em}\\raisebox{-0.4ex}{\\textit{,}}}").replace(/ș/g, "s\\rlap{\\hspace{-0.5em}\\raisebox{-0.4ex}{\\textit{,}}}").replace(/Ș/g, "S\\rlap{\\hspace{-1em}\\raisebox{-0.4ex}{\\textit{,}}}").replace(/Ț/g, "T\\rlap{\\hspace{-1em}\\raisebox{-0.4ex}{\\textit{,}}}").replace(/ț/g, "t\\rlap{\\hspace{-0.5em}\\raisebox{-0.4ex}{\\textit{,}}}").replace(/í̈/g, "\\ddot{\\acute{\\imath}}").replace(/Í̈/g, "\\ddot{\\acute{I}}").replace(/í/g, "\\acute{\\imath}").replace(/Í/g, "\\acute{I}").replace(/ï/g, "\\ddot{\\imath}");
+					},
+				});
+			};
+		</script>
+	</head>
+
+	<body style="text-align: justify">
+		$$\underline{\raisebox{-0.74ex}{V}\kern{-0.15em}31\raisebox{-0.74ex}{\kern{-0.08em}$n$}}$$
+		<p style="text-align: center"></p>
+		<div class="top-line-row">
+			<div class="tab active-tab" onclick="switchTab(event, 'girl2')">characters</div>
+			<div class="tab" onclick="switchTab(event, 'girl')">thoughts</div>
+			<div class="tab" onclick="switchTab(event, 'math')">math</div>
+		</div>
+		<div id="girl2" class="tab-content open">
+			<ol>
+				<li>step 1</li>
+			</ol>
+		</div>
+		<script>
+			window.__markersReady = new Promise((res) => (window.__resolveMarkers = res));
+			function switchTab(event, id) {
+				document.querySelectorAll(".tab-content").forEach((t) => t.classList.remove("open"));
+				document.querySelectorAll(".tab").forEach((t) => t.classList.remove("active-tab"));
+				document.getElementById(id).classList.add("open");
+				event.currentTarget.classList.add("active-tab");
+			}
+
+			const lis = Array.from(document.querySelectorAll("ol li"));
+			lis.reverse().forEach((li) => {
+				if (li.childNodes.length > 0 && li.childNodes[0].nodeType === 3) {
+					let text = li.childNodes[0].textContent.trim();
+
+					if (text.startsWith("*")) {
+						li.childNodes[0].textContent = li.childNodes[0].textContent.replace("*", "");
+					} else {
+						let html = li.innerHTML;
+						let newHtml = html.replace(/^\s*([^:<]+?)\s*:\s*/, (match, trope) => {
+							let cleanTrope = trope
+								.replace(/<\/?b>/gi, "")
+								.replace(/&nbsp;|\u00A0/gi, " ")
+								.trim();
+							let urlSlug = cleanTrope.replace(/[^a-zA-Z0-9]/g, "");
+							return `<b><a href="https://tvtropes.org/pmwiki/pmwiki.php/Main/${urlSlug}">${cleanTrope}</a> :</b> `;
+						});
+						if (html !== newHtml) {
+							li.innerHTML = newHtml;
+						}
+					}
+				}
+			});
+
+			const customAlphabet = ["aа", "bб", "vв", "ú", "ùw", "gг", "dд", "eе", "jżж", "zз", "iи", "yíй", "kк", "lл", "mм", "nн", "oо", "pп", "rр", "sс", "tт", "uу", "fф", "țц", "čч", "șш", "c", "q", "x", "h"];
+
+			const charRanks = {};
+			customAlphabet.forEach((chars, rank) => {
+				if (chars !== "") {
+					[...chars.toLowerCase()].forEach((c) => {
+						charRanks[c] = rank;
+					});
+				}
+			});
+
+			function getCharRank(char) {
+				return charRanks[char.toLowerCase()] ?? Infinity;
+			}
+			window.addEventListener("DOMContentLoaded", () => {
+				document.body.innerHTML = document.body.innerHTML.replace(/«\s*(.*?)\s*»/g, "«<i>$1</i>»");
+
+				document.querySelectorAll("ol").forEach((list) => {
+					if (list.style.listStyleType.includes("numeral")) return;
+					const items = Array.from(list.querySelectorAll(":scope > li"));
+					if (items.length === 0) return;
+
+					items.sort((a, b) => {
+						const getText = (el) => {
+							const clone = el.cloneNode(true);
+							clone.querySelectorAll("span.marker-span").forEach((s) => s.remove());
+							return clone.textContent.trim();
+						};
+						const textA = getText(a);
+						const textB = getText(b);
+						const minLength = Math.min(textA.length, textB.length);
+						for (let i = 0; i < minLength; i++) {
+							const rankA = getCharRank(textA[i]);
+							const rankB = getCharRank(textB[i]);
+							if (rankA !== rankB) return rankA - rankB;
+						}
+						return textA.length - textB.length;
+					});
+
+					items.forEach((item) => list.appendChild(item));
+				});
+
+				window.__resolveMarkers();
+			});
+
+			function toggleFolder(element) {
+				element.classList.toggle("isop");
+				const content = element.nextElementSibling;
+				content.classList.toggle("isop");
+			}
+			document.addEventListener("DOMContentLoaded", () => {
+				const footnore = ["†", "‡", "※", "∗", "⁑", "⁂"];
+
+				function getMarker(index) {
+					if (index < 5) return footnore[index];
+					const num = index - 4;
+					return num
+						.toString()
+						.split("")
+						.map((digit) => "⁰¹²³⁴⁵⁶⁷⁸⁹"[digit])
+						.join("");
+				}
+
+				function generateUUID() {
+					return "dwry-" + Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
+				}
+				document.querySelectorAll(".folder-content").forEach((folder) => {
+					const dwryTags = folder.querySelectorAll("dwry");
+					if (dwryTags.length === 0) return;
+
+					const footnotesContainer = document.createElement("div");
+					footnotesContainer.classList.add("dwry-container");
+
+					let itemsHTML = "";
+
+					dwryTags.forEach((tag, index) => {
+						const uuid = generateUUID();
+						const marker = getMarker(index);
+						const content = tag.innerHTML;
+						const prev = tag.previousSibling;
+						if (prev && prev.nodeType === 3) {
+							prev.textContent = prev.textContent.replace(/[ \u00A0]$/, "");
+						}
+						const inlineLink = document.createElement("a");
+						inlineLink.href = `#bottom-${uuid}`;
+						inlineLink.id = `inline-${uuid}`;
+						inlineLink.classList.add("dwry-inline-link");
+						inlineLink.innerHTML = `${marker}`;
+
+						tag.parentNode.replaceChild(inlineLink, tag);
+
+						const isTwoDigits = index - 4 >= 10;
+						const spacing = isTwoDigits ? "&nbsp;" : "";
+
+						itemsHTML += `
+							<span id="bottom-${uuid}" class="dwry-item">
+								<a href="#inline-${uuid}" class="dwry-bottom-link">${marker}</a>${spacing} ${content}
+							</span>`;
+					});
+
+					footnotesContainer.innerHTML = itemsHTML;
+
+					folder.appendChild(footnotesContainer);
+				});
+			});
+
+			function Noteopen(element) {
+				const Note = element.nextElementSibling;
+				if (Note && Note.classList.contains("note-text")) {
+					Note.classList.toggle("isop");
+				}
+			}
+
+			(async function () {
+				const CA_UPPER = ["A", "B", "Ú", "U", "Ù", "G", "D", "E", "Ż", "Z", "I", "Í", "K", "L", "M", "N", "O", "P", "R", "S", "T", "F", "Ț", "Č", "C", "Q", "X", "H"];
+				const CA_LOWER = ["a", "b", "ú", "u", "ù", "g", "d", "e", "ż", "z", "i", "í", "k", "l", "m", "n", "o", "p", "r", "s", "t", "f", "ț", "č", "c", "q", "x", "h"];
+				function alphabetic(n, syms) {
+					let r = "";
+					while (n > 0) {
+						n--;
+						r = syms[n % syms.length] + r;
+						n = Math.floor(n / syms.length);
+					}
+					return r;
+				}
+				function toRoman(n) {
+					const v = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1];
+					const s = ["m", "cm", "d", "cd", "c", "xc", "l", "xl", "x", "ix", "v", "iv", "i"];
+					let r = "";
+					v.forEach((val, i) => {
+						while (n >= val) {
+							r += s[i];
+							n -= val;
+						}
+					});
+					return r;
+				}
+				const STYLES = [
+					{ p: " ( ", s: " ) ", f: (n) => alphabetic(n, CA_UPPER) },
+					{ p: " ( ", s: " ) ", f: (n) => alphabetic(n, CA_LOWER) },
+					{ p: " ( ", s: " ) ", f: (n) => toRoman(n) },
+					{ p: "", s: ". ", f: (n) => String(n) },
+					{ p: "", s: ". ", f: (n) => alphabetic(n, CA_LOWER) },
+					{ p: "", s: ". ", f: (n) => alphabetic(n, CA_UPPER) },
+					{ p: "", s: ". ", f: (n) => toRoman(n) },
+					{ p: " » ", s: " « ", f: (n) => alphabetic(n, CA_UPPER) },
+					{ p: " » ", s: " « ", f: (n) => alphabetic(n, CA_LOWER) },
+					{ p: " » ", s: " « ", f: (n) => String(n) },
+					{ p: " » ", s: " « ", f: (n) => toRoman(n).toUpperCase() },
+					{ p: " » ", s: " « ", f: (n) => toRoman(n) },
+					{ p: "", s: " )", f: (n) => alphabetic(n, CA_LOWER) },
+				];
+				const sheet = document.createElement("style");
+				sheet.textContent = "ol { list-style: none !important; } span.marker-span { user-select: text; -webkit-user-select: text; }";
+				document.head.appendChild(sheet);
+				function olDepth(ol) {
+					let d = 0,
+						el = ol.parentElement;
+					while (el) {
+						if (el.tagName === "OL") d++;
+						el = el.parentElement;
+					}
+					return d;
+				}
+				function buildId(path) {
+					if (path.length === 0) return "";
+					if (path.length === 1) return "§ ( " + path[0] + " )";
+					return (
+						"§ ( " +
+						path[0] +
+						"/( " +
+						path
+							.slice(1)
+							.map((m) => m + ".")
+							.join("") +
+						" ) )"
+					);
+				}
+				function getParentPath(ol) {
+					const path = [];
+					let el = ol.parentElement;
+					while (el) {
+						if (el.tagName === "LI" && el.dataset.marker !== undefined) path.unshift(el.dataset.marker);
+						el = el.parentElement;
+					}
+					return path;
+				}
+				function processOl(ol) {
+					const parentPath = getParentPath(ol);
+					const style = STYLES[Math.min(olDepth(ol), STYLES.length - 1)];
+					let counter = parseInt(ol.getAttribute("start") || "1");
+					Array.from(ol.children).forEach((li) => {
+						if (li.tagName !== "LI") return;
+						const explicit = li.getAttribute("value");
+						if (explicit !== null) counter = parseInt(explicit);
+						const markerValue = style.f(counter);
+						const fullPath = parentPath.concat([markerValue]);
+						li.dataset.marker = markerValue;
+						if (!li.querySelector(":scope > span.marker-span")) {
+							const span = document.createElement("span");
+							span.className = "marker-span copynumerisfortoref";
+							span.id = buildId(fullPath);
+							span.textContent = style.p + markerValue + style.s;
+							li.insertBefore(span, li.firstChild);
+						} else {
+							const span = li.querySelector(":scope > span.marker-span");
+							span.classList.add("copynumerisfortoref");
+							span.id = buildId(fullPath);
+						}
+						counter++;
+					});
+				}
+				document.addEventListener("click", async function (e) {
+					const span = e.target.closest(".copynumerisfortoref");
+					if (!span || !span.id) return;
+					try {
+						await navigator.clipboard.writeText(span.id);
+					} catch (err) {
+						console.error("FAIL: Browser blocked the clipboard copy.", err);
+					}
+				});
+				await window.__markersReady;
+				document.querySelectorAll("ol").forEach(processOl);
+				new MutationObserver((mutations) => {
+					mutations.forEach((m) =>
+						m.addedNodes.forEach((node) => {
+							if (node.nodeType !== 1) return;
+							if (node.tagName === "OL") processOl(node);
+							node.querySelectorAll && node.querySelectorAll("ol").forEach(processOl);
+						})
+					);
+				}).observe(document.body, { childList: true, subtree: true });
+			})();
+		</script>
+	</body>
+</html>
