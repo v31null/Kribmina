@@ -8,6 +8,10 @@
 	font-variant-numeric: lining-nums;
 }
 @font-face {
+	font-family: regularor;
+	src: url(/css/fonts/regular.ttf);
+}
+@font-face {
 	font-family: Junicode;
 	src: url(/css/fonts/JunicodeVF-Roman.woff2);
 }
@@ -21,6 +25,18 @@
 }
 .copynumerisfortoref{
 	cursor: pointer;
+}
+.linf{
+	font-family: regularor;
+
+    background-color: rgb(206, 234, 244);
+    color: #000000;
+    padding: 2px 10px;
+    break-inside: avoid;
+    word-break: keep-all;
+    white-space: nowrap;
+    border-radius: 4px;
+    border: 2px solid #007bff;
 }
 .folder-label {
 	cursor: pointer;
@@ -39,6 +55,9 @@ h2 {
 	border-radius: 4px 4px 0px 0px;
 	padding: 3px 8px 2px;
 	margin-bottom: 4px;
+}
+.family-tree-table{
+	user-select: none !important;
 }
 h1 {
 	clear: both;
